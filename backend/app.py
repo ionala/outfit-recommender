@@ -4,6 +4,7 @@ from config import Config
 from extensions import db, migrate, bcrypt, jwt
 from models import User, DefaultWardrobe, PersonalWardrobe
 from routes.auth import auth_bp
+from routes.wardrobe import wardrobe_bp
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -15,6 +16,7 @@ bcrypt.init_app(app)
 jwt.init_app(app)
 
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
+app.register_blueprint(wardrobe_bp, url_prefix='/api/wardrobe')
 
 @app.route('/')
 def index():
