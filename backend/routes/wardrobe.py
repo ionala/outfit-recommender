@@ -1,9 +1,50 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, current_app
 from models import DefaultWardrobe, PersonalWardrobe
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from extensions import db
+import os
+import uuid
+from werkzeug.utils import secure_filename
 
 wardrobe_bp = Blueprint('wardrobe', __name__)
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@wardrobe_bp.route('/upload', methods=['POST'])
+@jwt_required()
+def upload_image():
+    if 'image' not in request.files:
+        return jsonify({'message': 'Tidak ada file yang diunggah'}), 400
+    
+    file = request.files['image']
+    if file.filename == '':
+        return jsonify({'message': 'Nama file kosong'}), 400
+    
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        ext = filename.rsplit('.', 1)[1].lower()
+        unique_filename = f"{uuid.uuid4().hex}.{ext}"
+        
+        upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+        os.makedirs(upload_folder, exist_ok=True)
+        
+        filepath = os.path.join(upload_folder, unique_filename)
+        file.save(filepath)
+        
+        relative_path = f"static/uploads/{unique_filename}"
+        full_url = request.host_url.rstrip('/') + '/' + relative_path
+        
+        return jsonify({
+            'message': 'File berhasil diunggah',
+            'image_path': relative_path,
+            'image_url': full_url
+        }), 200
+        
+    return jsonify({'message': 'Format file tidak didukung'}), 400
 
 
 @wardrobe_bp.route('/default', methods=['GET'])
@@ -37,6 +78,10 @@ def get_personal_wardrobe():
     result = []
 
     for item in items:
+        image_path = item.image_path
+        if image_path and not image_path.startswith(('http://', 'https://')):
+            image_path = request.host_url + image_path
+
         result.append({
             'id_personal': item.id_personal,
             'user_id': item.user_id,
@@ -44,7 +89,7 @@ def get_personal_wardrobe():
             'kategori': item.kategori,
             'style': item.style,
             'warna_grup': item.warna_grup,
-            'image_path': item.image_path
+            'image_path': image_path
         })
 
     return jsonify({
@@ -94,6 +139,10 @@ def add_personal_wardrobe():
     db.session.add(new_item)
     db.session.commit()
 
+    resp_image_path = new_item.image_path
+    if resp_image_path and not resp_image_path.startswith(('http://', 'https://')):
+        resp_image_path = request.host_url + resp_image_path
+
     return jsonify({
         'message': 'data personal wardrobe berhasil ditambahkan',
         'data': {
@@ -103,7 +152,7 @@ def add_personal_wardrobe():
             'kategori': new_item.kategori,
             'style': new_item.style,
             'warna_grup': new_item.warna_grup,
-            'image_path': new_item.image_path
+            'image_path': resp_image_path
         }
     }), 201
 
@@ -168,7 +217,19 @@ def delete_personal_wardrobe(id_personal):
     ).first()
 
     if not item:
-        return jsonify({'message': 'data personal wardrobe tidak ditemukan'}), 404
+        return jsonify({
+            'message': 'data personal wardrobe tidak ditemukan'
+        }), 404
+
+    # Hapus file gambar jika ada
+    if item.image_path and not item.image_path.startswith(('http://', 'https://')):
+        file_path = os.path.join(current_app.root_path, item.image_path)
+
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+            except Exception as e:
+                current_app.logger.warning(f"Gagal menghapus file: {e}")
 
     db.session.delete(item)
     db.session.commit()

@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
+import '../styles/auth.css';
 
 export default function Register() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ nama: '', username: '', password: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -16,36 +18,115 @@ export default function Register() {
     e.preventDefault();
     setError('');
     setSuccess('');
+    setLoading(true);
     try {
       await api.post('/auth/register', form);
-      setSuccess('Registrasi berhasil! Silakan login.');
+      setSuccess('Registrasi berhasil! Mengarahkan ke halaman login...');
       setTimeout(() => navigate('/login'), 1500);
     } catch (err) {
       setError(err.response?.data?.message || 'Registrasi gagal');
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <div>
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Nama</label>
-          <input name="nama" value={form.nama} onChange={handleChange} />
+    <div className="auth-layout">
+      {/* Left panel — branding */}
+      <div className="auth-hero">
+        <div className="auth-hero-content">
+          <div className="auth-hero-brand">Capsule</div>
+          <h1 className="auth-hero-title">Build your<br />perfect capsule.</h1>
+          <p className="auth-hero-sub">
+            Organize your wardrobe and get outfit recommendations tailored just for you.
+          </p>
         </div>
-        <div>
-          <label>Username</label>
-          <input name="username" value={form.username} onChange={handleChange} />
+        <div className="auth-hero-dots">
+          <span /><span /><span />
         </div>
-        <div>
-          <label>Password</label>
-          <input name="password" type="password" value={form.password} onChange={handleChange} />
+      </div>
+
+      {/* Right panel — form */}
+      <div className="auth-panel">
+        <div className="auth-card">
+          <div className="auth-card-header">
+            <h2 className="auth-card-title">Buat akun baru</h2>
+            <p className="auth-card-sub">Bergabung dan mulai eksplorasi gayamu</p>
+          </div>
+
+          <form className="auth-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label className="form-label">Nama lengkap</label>
+              <input
+                id="register-nama"
+                className="form-input"
+                name="nama"
+                value={form.nama}
+                onChange={handleChange}
+                placeholder="Masukkan nama lengkap"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Username</label>
+              <input
+                id="register-username"
+                className="form-input"
+                name="username"
+                value={form.username}
+                onChange={handleChange}
+                placeholder="Pilih username"
+                autoComplete="username"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Password</label>
+              <input
+                id="register-password"
+                className="form-input"
+                name="password"
+                type="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="Buat password"
+                autoComplete="new-password"
+                required
+              />
+            </div>
+
+            {error && (
+              <div className="auth-error">
+                <span className="auth-error-icon">⚠</span>
+                {error}
+              </div>
+            )}
+
+            {success && (
+              <div className="auth-success">
+                <span className="auth-success-icon">✓</span>
+                {success}
+              </div>
+            )}
+
+            <button
+              id="register-submit"
+              className="btn-primary auth-submit"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? 'Mendaftar...' : 'Daftar'}
+            </button>
+          </form>
+
+          <p className="auth-footer">
+            Sudah punya akun?{' '}
+            <Link to="/login" className="auth-link">Masuk di sini</Link>
+          </p>
         </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        {success && <p style={{ color: 'green' }}>{success}</p>}
-        <button type="submit">Register</button>
-      </form>
-      <p>Sudah punya akun? <Link to="/login">Login</Link></p>
+      </div>
     </div>
   );
 }
