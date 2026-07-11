@@ -22,7 +22,7 @@ export default function Home() {
           personalCount: resPersonal.data.data?.length || 0
         });
       } catch (err) {
-        console.error('Gagal mengambil data statistik wardrobe:', err);
+        console.error('Failed to load wardrobe statistics:', err);
       }
     }
     loadStats();
@@ -36,15 +36,15 @@ export default function Home() {
       <div className="page-main">
         {/* Greeting Section */}
         <div className="greeting">
-          <div className="greeting-sub">Selamat Datang Kembali</div>
+          <div className="greeting-sub">Welcome Back</div>
           <h1 className="greeting-name">
-            Halo, <strong>{user?.nama || 'User'}</strong>
+            Hello, <strong>{user?.nama || 'User'}</strong>
           </h1>
           <div className="greeting-line"></div>
         </div>
 
         {/* Quick Access Menu Cards */}
-        <div className="sec-label">Menu Utama</div>
+        <div className="sec-label">Main Menu</div>
         <div className="grid-3">
           <div className="menu-card" onClick={() => navigate('/wardrobe')}>
             <div className="card-icon ic-terra">
@@ -54,10 +54,10 @@ export default function Home() {
             </div>
             <div className="card-title">Wardrobe</div>
             <div className="card-desc">
-              Kelola koleksi pakaian pribadimu, tambahkan pakaian baru, dan edit detail wardrobe.
+              Manage your personal clothing collection, add new clothes, and edit wardrobe details.
             </div>
             <div className="card-link" style={{ color: 'var(--terra)' }}>
-              Buka Wardrobe &rarr;
+              Open Wardrobe &rarr;
             </div>
           </div>
 
@@ -67,12 +67,12 @@ export default function Home() {
                 <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
               </svg>
             </div>
-            <div className="card-title">Rekomendasi Outfit</div>
+            <div className="card-title">Outfit Recommendation</div>
             <div className="card-desc">
-              Dapatkan saran kombinasi pakaian otomatis yang serasi dari pakaian pilihanmu.
+              Get automatic suggestions for matching clothing combinations from your selected clothes.
             </div>
             <div className="card-link" style={{ color: 'var(--clay)' }}>
-              Cari Rekomendasi &rarr;
+              Get Recommendations &rarr;
             </div>
           </div>
 
@@ -82,22 +82,22 @@ export default function Home() {
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/>
               </svg>
             </div>
-            <div className="card-title">Profil Saya</div>
+            <div className="card-title">My Profile</div>
             <div className="card-desc">
-              Atur informasi akun, ubah username, nama lengkap, atau perbarui sandi keamananmu.
+              Manage account details, change username, full name, or update your password.
             </div>
             <div className="card-link" style={{ color: 'var(--brown)' }}>
-              Lihat Profil &rarr;
+              View Profile &rarr;
             </div>
           </div>
         </div>
 
         {/* Statistics Cards */}
-        <div className="sec-label">Statistik Koleksi</div>
+        <div className="sec-label">Collection Statistics</div>
         <div className="stat-grid">
           <div className="stat-card">
             <div className="stat-num">{stats.defaultCount}</div>
-            <div className="stat-label">Pakaian Default</div>
+            <div className="stat-label">Default Clothes</div>
             <div className="stat-bar">
               <div className="stat-fill" style={{ width: `${stats.defaultCount > 0 ? 100 : 0}%`, background: 'var(--terra)' }}></div>
             </div>
@@ -105,7 +105,7 @@ export default function Home() {
 
           <div className="stat-card">
             <div className="stat-num">{stats.personalCount}</div>
-            <div className="stat-label">Pakaian Pribadi</div>
+            <div className="stat-label">Personal Clothes</div>
             <div className="stat-bar">
               <div className="stat-fill" style={{ width: `${stats.personalCount > 0 ? 100 : 0}%`, background: 'var(--clay)' }}></div>
             </div>
@@ -113,7 +113,7 @@ export default function Home() {
 
           <div className="stat-card">
             <div className="stat-num">{totalCount}</div>
-            <div className="stat-label">Total Item Wardrobe</div>
+            <div className="stat-label">Total Wardrobe Items</div>
             <div className="stat-bar">
               <div className="stat-fill" style={{ width: `${totalCount > 0 ? 100 : 0}%`, background: 'var(--brown)' }}></div>
             </div>

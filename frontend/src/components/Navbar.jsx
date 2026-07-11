@@ -9,7 +9,7 @@ function Navbar() {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
 
-    // Tutup dropdown kalau klik di luar
+    // Close dropdown if clicked outside
     useEffect(() => {
         function handleClickOutside(e) {
             if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -45,7 +45,7 @@ function Navbar() {
                 <div
                     className={`nav-avatar${dropdownOpen ? ' nav-avatar--active' : ''}`}
                     onClick={() => setDropdownOpen(prev => !prev)}
-                    title="Akun saya"
+                    title="My account"
                 >
                     {userInitial}
                 </div>
@@ -56,7 +56,7 @@ function Navbar() {
                             onClick={() => { setDropdownOpen(false); navigate('/profile'); }}
                         >
                             <span className="nav-dropdown-icon">👤</span>
-                            Profil
+                            Profile
                         </button>
                         <div className="nav-dropdown-divider" />
                         <button

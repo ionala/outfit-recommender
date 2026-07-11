@@ -12,7 +12,7 @@ function PrivateRoute({ children }) {
 
   if (loading) {
     return null;
-    // atau return <div>Loading...</div>;
+    // or return <div>Loading...</div>;
   }
 
   return token ? children : <Navigate to="/login" replace />;

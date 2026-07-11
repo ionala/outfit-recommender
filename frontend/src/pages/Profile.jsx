@@ -87,7 +87,7 @@ export default function Profile() {
   const [passwordError, setPasswordError] = useState('');
 
   const [profileLoading, setProfileLoading] = useState(false);
-  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordLoading] = useState(false);
 
   const [toastMsg, setToastMsg] = useState('');
   const [toastShow, setToastShow] = useState(false);

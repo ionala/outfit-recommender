@@ -10,9 +10,9 @@ const WARNA = ['neutral', 'warm', 'cool'];
 const emptyForm = { nama_pakaian: '', kategori: '', style: '', warna_grup: '', image_path: '' };
 
 const COLOR_MAP = {
-  neutral: { hex: '#D1D5DB', name: 'Neutral (Abu/Hitam/Putih)' },
-  warm: { hex: '#F59E0B', name: 'Warm (Cokelat/Kuning/Merah)' },
-  cool: { hex: '#3B82F6', name: 'Cool (Biru/Hijau/Ungu)' }
+  neutral: { hex: '#D1D5DB', name: 'Neutral (Gray/Black/White)' },
+  warm: { hex: '#F59E0B', name: 'Warm (Brown/Yellow/Red)' },
+  cool: { hex: '#3B82F6', name: 'Cool (Blue/Green/Purple)' }
 };
 
 export default function Wardrobe() {
@@ -28,7 +28,7 @@ export default function Wardrobe() {
 
   // Filtering states
   const [activeTab, setActiveTab] = useState('personal'); // 'personal' or 'default'
-  const [categoryFilter, setCategoryFilter] = useState('semua');
+  const [categoryFilter, setCategoryFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   const [selectedImage, setSelectedImage] = useState(null);
@@ -43,7 +43,7 @@ export default function Wardrobe() {
       const res = await api.get('/wardrobe/default');
       setDefaultItems(res.data.data);
     } catch (err) {
-      console.error('Gagal mengambil default wardrobe:', err);
+      console.error('Failed to retrieve default wardrobe:', err);
     }
   }
 
@@ -52,7 +52,7 @@ export default function Wardrobe() {
       const res = await api.get('/wardrobe/personal');
       setPersonalItems(res.data.data);
     } catch (err) {
-      console.error('Gagal mengambil personal wardrobe:', err);
+      console.error('Failed to retrieve personal wardrobe:', err);
     }
   }
 
@@ -82,7 +82,7 @@ export default function Wardrobe() {
         image_path: res.data.image_path
       }));
     } catch (err) {
-      setError('Gagal upload gambar');
+      setError('Failed to upload image');
     } finally {
       setUploading(false);
     }
@@ -95,10 +95,10 @@ export default function Wardrobe() {
     try {
       if (editId) {
         await api.put(`/wardrobe/personal/${editId}`, form);
-        setSuccess('Pakaian berhasil diperbarui!');
+        setSuccess('Clothing updated successfully!');
       } else {
         await api.post('/wardrobe/personal', form);
-        setSuccess('Pakaian berhasil ditambahkan!');
+        setSuccess('Clothing added successfully!');
       }
       setForm(emptyForm);
       setSelectedFile(null);
@@ -106,7 +106,7 @@ export default function Wardrobe() {
       fetchPersonal();
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Terjadi kesalahan');
+      setError(err.response?.data?.message || 'An error occurred');
     }
   }
 
@@ -124,12 +124,12 @@ export default function Wardrobe() {
   }
 
   async function handleDelete(id) {
-    if (!confirm('Hapus item ini dari wardrobe Anda?')) return;
+    if (!confirm('Remove this item from your wardrobe?')) return;
     try {
       await api.delete(`/wardrobe/personal/${id}`);
       fetchPersonal();
     } catch (err) {
-      console.error('Gagal menghapus pakaian:', err);
+      console.error('Failed to delete clothing:', err);
     }
   }
 
@@ -138,7 +138,7 @@ export default function Wardrobe() {
 
   // Filter items based on category and search query
   const filteredItems = itemsToFilter.filter(item => {
-    const matchesCategory = categoryFilter === 'semua' || item.kategori === categoryFilter;
+    const matchesCategory = categoryFilter === 'all' || item.kategori === categoryFilter;
     const matchesSearch = item.nama_pakaian.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
@@ -174,14 +174,14 @@ export default function Wardrobe() {
         <div className="page-header">
           <div>
             <h1 className="page-title">Wardrobe</h1>
-            <p className="page-sub">Kelola dan atur semua pakaian capsule wardrobe milikmu.</p>
+            <p className="page-sub">Manage and organize all your capsule wardrobe clothing.</p>
           </div>
         </div>
 
         {/* Add/Edit Form (only shown if tab is personal, or always shown on top for convenience) */}
         <div className="form-card">
           <div className="form-card-title">
-            {editId ? 'Edit Pakaian Anda' : 'Tambah Pakaian Baru ke Wardrobe'}
+            {editId ? 'Edit Your Clothing' : 'Add New Clothing to Wardrobe'}
           </div>
           <form onSubmit={handleSubmit}>
             <div className="form-with-image">
@@ -226,7 +226,7 @@ export default function Wardrobe() {
                       </svg>
 
                       <div className="image-upload-label">
-                        {uploading ? "Uploading..." : "Pilih Foto"}
+                        {uploading ? "Uploading..." : "Select Photo"}
                       </div>
                     </>
                   )}
@@ -236,34 +236,34 @@ export default function Wardrobe() {
               <div className="form-fields-col">
                 <div className="form-grid-4" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '14px', marginBottom: '14px' }}>
                   <div className="form-group">
-                    <label className="form-label">Nama Pakaian</label>
+                    <label className="form-label">Clothing Name</label>
                     <input
                       name="nama_pakaian"
                       className="form-input"
-                      placeholder="Contoh: Kemeja Flannel Merah"
+                      placeholder="Example: Red Flannel Shirt"
                       value={form.nama_pakaian}
                       onChange={handleChange}
                       required
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Kategori</label>
+                    <label className="form-label">Category</label>
                     <select name="kategori" className="form-select" value={form.kategori} onChange={handleChange} required>
-                      <option value="">Pilih...</option>
+                      <option value="">Select...</option>
                       {KATEGORI.map(k => <option key={k} value={k}>{k.charAt(0).toUpperCase() + k.slice(1)}</option>)}
                     </select>
                   </div>
                   <div className="form-group">
                     <label className="form-label">Style</label>
                     <select name="style" className="form-select" value={form.style} onChange={handleChange} required>
-                      <option value="">Pilih...</option>
+                      <option value="">Select...</option>
                       {STYLE.map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
                     </select>
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Warna Grup</label>
+                    <label className="form-label">Color Group</label>
                     <select name="warna_grup" className="form-select" value={form.warna_grup} onChange={handleChange} required>
-                      <option value="">Pilih...</option>
+                      <option value="">Select...</option>
                       {WARNA.map(w => <option key={w} value={w}>{w.charAt(0).toUpperCase() + w.slice(1)}</option>)}
                     </select>
                   </div>
@@ -277,11 +277,11 @@ export default function Wardrobe() {
             <div className="form-actions">
               {editId && (
                 <button type="button" className="btn-secondary" onClick={() => { setForm(emptyForm); setEditId(null); }}>
-                  Batal
+                  Cancel
                 </button>
               )}
               <button type="submit" className="btn-primary">
-                {editId ? 'Update Pakaian' : 'Simpan ke Wardrobe'}
+                {editId ? 'Update Clothing' : 'Save to Wardrobe'}
               </button>
             </div>
           </form>
@@ -291,25 +291,25 @@ export default function Wardrobe() {
         <div className="filter-bar">
           <button
             className={`filter-chip ${activeTab === 'personal' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('personal'); setCategoryFilter('semua'); }}
+            onClick={() => { setActiveTab('personal'); setCategoryFilter('all'); }}
           >
-            Koleksi Saya ({personalItems.length})
+            My Collection ({personalItems.length})
           </button>
           <button
             className={`filter-chip ${activeTab === 'default' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('default'); setCategoryFilter('semua'); }}
+            onClick={() => { setActiveTab('default'); setCategoryFilter('all'); }}
           >
-            Koleksi Bawaan ({defaultItems.length})
+            Default Collection ({defaultItems.length})
           </button>
 
           <span style={{ color: 'var(--border)', margin: '0 8px' }}>|</span>
 
           {/* Category Chips */}
           <button
-            className={`filter-chip ${categoryFilter === 'semua' ? 'active' : ''}`}
-            onClick={() => setCategoryFilter('semua')}
+            className={`filter-chip ${categoryFilter === 'all' ? 'active' : ''}`}
+            onClick={() => setCategoryFilter('all')}
           >
-            Semua
+            All
           </button>
           {KATEGORI.map(cat => (
             <button
@@ -325,7 +325,7 @@ export default function Wardrobe() {
             <input
               type="text"
               className="search-input"
-              placeholder="Cari pakaian..."
+              placeholder="Search clothing..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -340,7 +340,7 @@ export default function Wardrobe() {
                 <circle cx="12" cy="12" r="10" />
                 <line x1="8" y1="12" x2="16" y2="12" />
               </svg>
-              <p>Tidak ada pakaian yang cocok dengan filter atau kata kunci Anda.</p>
+              <p>No clothing matches your filters or search query.</p>
             </div>
           ) : (
             filteredItems.map(item => {
@@ -405,7 +405,7 @@ export default function Wardrobe() {
                           Edit
                         </button>
                         <button className="btn-delete" onClick={() => handleDelete(item.id_personal)}>
-                          Hapus
+                          Delete
                         </button>
                       </div>
                     )}

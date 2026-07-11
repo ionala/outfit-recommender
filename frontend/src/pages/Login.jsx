@@ -24,7 +24,7 @@ export default function Login() {
       login(res.data.user, res.data.token);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login gagal');
+      setError(err.response?.data?.message || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -51,7 +51,7 @@ export default function Login() {
         <div className="auth-card">
           <div className="auth-card-header">
             <h2 className="auth-card-title">Welcome back</h2>
-            <p className="auth-card-sub">Masuk ke akunmu untuk melanjutkan</p>
+            <p className="auth-card-sub">Log in to your account to continue</p>
           </div>
 
           <form className="auth-form" onSubmit={handleSubmit}>
@@ -63,7 +63,7 @@ export default function Login() {
                 name="username"
                 value={form.username}
                 onChange={handleChange}
-                placeholder="Masukkan username"
+                placeholder="Enter your username"
                 autoComplete="username"
                 required
               />
@@ -78,7 +78,7 @@ export default function Login() {
                 type="password"
                 value={form.password}
                 onChange={handleChange}
-                placeholder="Masukkan password"
+                placeholder="Enter your password"
                 autoComplete="current-password"
                 required
               />
@@ -97,13 +97,13 @@ export default function Login() {
               type="submit"
               disabled={loading}
             >
-              {loading ? 'Masuk...' : 'Masuk'}
+              {loading ? 'Logging in...' : 'Log In'}
             </button>
           </form>
 
           <p className="auth-footer">
-            Belum punya akun?{' '}
-            <Link to="/register" className="auth-link">Daftar sekarang</Link>
+            Don't have an account?{' '}
+            <Link to="/register" className="auth-link">Register now</Link>
           </p>
         </div>
       </div>

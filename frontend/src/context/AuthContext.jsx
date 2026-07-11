@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
         if (savedUser) {
           setUser(JSON.parse(savedUser));
         }
-      } catch (err) {
+      } catch {
         logout();
       } finally {
         setLoading(false);

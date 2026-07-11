@@ -8,9 +8,9 @@ const WARNA = ['neutral', 'warm', 'cool'];
 const SOURCE = ['default', 'personal', 'both'];
 
 const SOURCE_LABELS = {
-  default: 'Koleksi Bawaan (Default)',
-  personal: 'Koleksi Saya (Personal)',
-  both: 'Gabungan (Default & Personal)'
+  default: 'Default Collection',
+  personal: 'My Collection (Personal)',
+  both: 'Combined (Default & Personal)'
 };
 
 export default function Recommendation() {
@@ -41,7 +41,7 @@ export default function Recommendation() {
       setOutfits(res.data.outfits);
       setTotal(res.data.total_outfit);
     } catch (err) {
-      setError(err.response?.data?.message || 'Gagal menghasilkan kombinasi outfit.');
+      setError(err.response?.data?.message || 'Failed to generate outfit combinations.');
     } finally {
       setLoading(false);
     }
@@ -54,35 +54,35 @@ export default function Recommendation() {
         {/* Page Header */}
         <div className="page-header">
           <div>
-            <h1 className="page-title">Rekomendasi Outfit</h1>
-            <p className="page-sub">Temukan kombinasi setel pakaian terbaik berdasarkan warna dan gayamu.</p>
+            <h1 className="page-title">Outfit Recommendation</h1>
+            <p className="page-sub">Find the best outfit combinations based on your color group and style.</p>
           </div>
         </div>
 
         {/* Filter Card */}
         <div className="filter-card">
-          <div className="filter-title">Parameter Rekomendasi</div>
+          <div className="filter-title">Recommendation Parameters</div>
           <form onSubmit={handleGenerate}>
             <div className="filter-row">
               <div className="form-group">
-                <label className="form-label">Sumber Pakaian</label>
+                <label className="form-label">Clothing Source</label>
                 <select name="source" className="form-select" value={form.source} onChange={handleChange}>
                   {SOURCE.map(s => <option key={s} value={s}>{SOURCE_LABELS[s]}</option>)}
                 </select>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Gaya Pakaian (Style)</label>
+                <label className="form-label">Clothing Style</label>
                 <select name="style" className="form-select" value={form.style} onChange={handleChange}>
-                  <option value="">Semua Style (Gaya)</option>
+                  <option value="">All Styles</option>
                   {STYLE.map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
                 </select>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Grup Warna</label>
+                <label className="form-label">Color Group</label>
                 <select name="warna_grup" className="form-select" value={form.warna_grup} onChange={handleChange}>
-                  <option value="">Semua Warna</option>
+                  <option value="">All Colors</option>
                   {WARNA.map(w => <option key={w} value={w}>{w.charAt(0).toUpperCase() + w.slice(1)}</option>)}
                 </select>
               </div>
@@ -105,8 +105,8 @@ export default function Recommendation() {
         {/* Results Info */}
         {total !== null && (
           <div className="results-header">
-            <span className="results-label">Hasil Rekomendasi</span>
-            <span className="results-count">Ditemukan {total} kombinasi outfit</span>
+            <span className="results-label">Recommendations</span>
+            <span className="results-count">Found {total} outfit combinations</span>
           </div>
         )}
 
@@ -115,7 +115,7 @@ export default function Recommendation() {
           {outfits.map((o, i) => (
             <div className="outfit-card-v2" key={i}>
               <div className="outfit-card-top">
-                <span className="outfit-label">Setelan #{i + 1}</span>
+                <span className="outfit-label">Outfit Set #{i + 1}</span>
                 <span className="badge badge-terra" style={{ textTransform: 'uppercase', fontSize: '9px' }}>Matched</span>
               </div>
 
@@ -137,7 +137,7 @@ export default function Recommendation() {
                   </div>
                   <div>
                     <div className="item-name-lg" title={o.atasan}>{o.atasan}</div>
-                    <div className="item-meta">Atasan</div>
+                    <div className="item-meta">Top</div>
                   </div>
                 </div>
 
@@ -165,7 +165,7 @@ export default function Recommendation() {
                   </div>
                   <div>
                     <div className="item-name-lg" title={o.bawahan}>{o.bawahan}</div>
-                    <div className="item-meta">Bawahan</div>
+                    <div className="item-meta">Bottom</div>
                   </div>
                 </div>
 
@@ -193,7 +193,7 @@ export default function Recommendation() {
                   </div>
                   <div>
                     <div className="item-name-lg" title={o.sepatu}>{o.sepatu}</div>
-                    <div className="item-meta">Sepatu</div>
+                    <div className="item-meta">Shoes</div>
                   </div>
                 </div>
               </div>
@@ -207,7 +207,7 @@ export default function Recommendation() {
               <circle cx="12" cy="12" r="10" />
               <line x1="8" y1="12" x2="16" y2="12" />
             </svg>
-            <p>Tidak menemukan kombinasi outfit yang sesuai dengan kriteria filter.</p>
+            <p>No outfit combinations found matching the filter criteria.</p>
           </div>
         )}
       </div>

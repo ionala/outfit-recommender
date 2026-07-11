@@ -21,10 +21,10 @@ export default function Register() {
     setLoading(true);
     try {
       await api.post('/auth/register', form);
-      setSuccess('Registrasi berhasil! Mengarahkan ke halaman login...');
+      setSuccess('Registration successful! Redirecting to login page...');
       setTimeout(() => navigate('/login'), 1500);
     } catch (err) {
-      setError(err.response?.data?.message || 'Registrasi gagal');
+      setError(err.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -50,20 +50,20 @@ export default function Register() {
       <div className="auth-panel">
         <div className="auth-card">
           <div className="auth-card-header">
-            <h2 className="auth-card-title">Buat akun baru</h2>
-            <p className="auth-card-sub">Bergabung dan mulai eksplorasi gayamu</p>
+            <h2 className="auth-card-title">Create a new account</h2>
+            <p className="auth-card-sub">Join and start exploring your style</p>
           </div>
 
           <form className="auth-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              <label className="form-label">Nama lengkap</label>
+              <label className="form-label">Full name</label>
               <input
                 id="register-nama"
                 className="form-input"
                 name="nama"
                 value={form.nama}
                 onChange={handleChange}
-                placeholder="Masukkan nama lengkap"
+                placeholder="Enter your full name"
                 required
               />
             </div>
@@ -76,7 +76,7 @@ export default function Register() {
                 name="username"
                 value={form.username}
                 onChange={handleChange}
-                placeholder="Pilih username"
+                placeholder="Choose a username"
                 autoComplete="username"
                 required
               />
@@ -91,7 +91,7 @@ export default function Register() {
                 type="password"
                 value={form.password}
                 onChange={handleChange}
-                placeholder="Buat password"
+                placeholder="Create a password"
                 autoComplete="new-password"
                 required
               />
@@ -117,13 +117,13 @@ export default function Register() {
               type="submit"
               disabled={loading}
             >
-              {loading ? 'Mendaftar...' : 'Daftar'}
+              {loading ? 'Registering...' : 'Register'}
             </button>
           </form>
 
           <p className="auth-footer">
-            Sudah punya akun?{' '}
-            <Link to="/login" className="auth-link">Masuk di sini</Link>
+            Already have an account?{' '}
+            <Link to="/login" className="auth-link">Log in here</Link>
           </p>
         </div>
       </div>
