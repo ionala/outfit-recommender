@@ -287,6 +287,23 @@ body {
     transform: scale(1.08);
 }
 
+.nav-avatar--image {
+    padding: 0;
+    overflow: hidden;
+}
+
+.nav-avatar--image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.nav-avatar--image:hover {
+    background: transparent;
+    filter: brightness(0.9);
+}
+
 .nav-user {
     position: relative;
 }

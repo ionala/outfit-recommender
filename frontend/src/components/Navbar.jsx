@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../api/axios';
 
 function Navbar() {
     const { user, logout } = useAuth();
@@ -8,6 +9,11 @@ function Navbar() {
     const userInitial = user?.nama ? user.nama.charAt(0).toUpperCase() : 'U';
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
+
+    const BASE_URL = api.defaults.baseURL.replace("/api", "");
+    const profileImage = user?.profile_image
+        ? `${BASE_URL}${user.profile_image}`
+        : null;
 
     // Close dropdown if clicked outside
     useEffect(() => {
@@ -43,11 +49,15 @@ function Navbar() {
 
             <div className="nav-user" ref={dropdownRef}>
                 <div
-                    className={`nav-avatar${dropdownOpen ? ' nav-avatar--active' : ''}`}
+                    className={`nav-avatar${profileImage ? ' nav-avatar--image' : ''}${dropdownOpen ? ' nav-avatar--active' : ''}`}
                     onClick={() => setDropdownOpen(prev => !prev)}
                     title="My account"
                 >
-                    {userInitial}
+                    {profileImage ? (
+                        <img src={profileImage} alt="Profile" />
+                    ) : (
+                        userInitial
+                    )}
                 </div>
                 {dropdownOpen && (
                     <div className="nav-dropdown">
