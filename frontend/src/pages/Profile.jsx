@@ -62,7 +62,7 @@ export default function Profile() {
   const [passwordError, setPasswordError] = useState('');
 
   const [profileLoading, setProfileLoading] = useState(false);
-  const [passwordLoading] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
 
   const [toastMsg, setToastMsg] = useState('');
   const [toastShow, setToastShow] = useState(false);
@@ -185,14 +185,38 @@ export default function Profile() {
   async function handleUpdatePassword(e) {
     e.preventDefault();
     setPasswordError('');
+    setPasswordLoading(true);
 
     if (!passwordForm.password) {
       setPasswordError('Enter a new password.');
+      setPasswordLoading(false);
       return;
     }
+
     if (passwordForm.password !== passwordForm.confirmPassword) {
       setPasswordError('Password confirmation does not match.');
+      setPasswordLoading(false);
       return;
+    }
+
+    try {
+      await api.put('/auth/me/password', {
+        password: passwordForm.password
+      });
+
+      setPasswordForm({
+        password: '',
+        confirmPassword: ''
+      });
+
+      setPasswordError('');
+
+      showToast('Password updated successfully');
+
+    } catch (err) {
+      setPasswordError(
+        err.response?.data?.message || 'Failed to update password.'
+      );
     }
   }
 
