@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import Navbar from '../components/Navbar';
+import ConfirmModal from '../components/ConfirmModal';
 import '../styles/pages.css';
 
 const KATEGORI = ['atasan', 'bawahan', 'sepatu'];
@@ -16,7 +17,6 @@ const COLOR_MAP = {
 };
 
 // Base URL for resolving relative image paths from the backend.
-// Adjust this if your API base URL is different (e.g. use an env var).
 const API_BASE_URL = api.defaults?.baseURL?.replace(/\/api\/?$/, '') || '';
 
 // Single source of truth for turning a stored image_path (or image_url)
@@ -49,6 +49,10 @@ export default function Wardrobe() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const [selectedImage, setSelectedImage] = useState(null);
+
+  // Delete confirmation modal state
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     fetchDefault();
@@ -153,13 +157,22 @@ export default function Wardrobe() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  async function handleDelete(id) {
-    if (!confirm('Remove this item from your wardrobe?')) return;
+  function handleDelete(id) {
+    setDeleteTargetId(id);
+  }
+
+  async function confirmDelete() {
+    if (!deleteTargetId) return;
+    setDeleteLoading(true);
     try {
-      await api.delete(`/wardrobe/personal/${id}`);
+      await api.delete(`/wardrobe/personal/${deleteTargetId}`);
       fetchPersonal();
+      setDeleteTargetId(null);
     } catch (err) {
-      console.error('Failed to delete clothing:', err);
+      setError('Failed to delete clothing.');
+      setDeleteTargetId(null);
+    } finally {
+      setDeleteLoading(false);
     }
   }
 
@@ -177,20 +190,20 @@ export default function Wardrobe() {
     if (kategori === 'atasan') {
       return (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: '32px', height: '32px' }}>
-          <path d="M20.38 3.46L16 2a4 4 0 0 0-8 0L3.62 3.46a2 2 0 0 0-1.62 2V9a2 2 0 0 0 2 2h2v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V11h2a2 2 0 0 0 2-2V5.42a2 2 0 0 0-1.62-2z" />
+          <path d="M20.38 3.46L16 2a4 4 0 0 0-8 0L3.62 3.46a2 2 0 0 0-1.62 2V9a2 2 0 0 0 2 2h2v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V11h2a2 2 0 0 0 2-2V5.42a2 2 0 0 0-1.62-2z"/>
         </svg>
       );
     } else if (kategori === 'bawahan') {
       return (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: '32px', height: '32px' }}>
-          <path d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" />
-          <path d="M12 2v20M4 11h16" />
+          <path d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+          <path d="M12 2v20M4 11h16"/>
         </svg>
       );
     } else {
       return (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: '32px', height: '32px' }}>
-          <path d="M3 12h18M3 12a9 9 0 0 1 18 0M3 12c0-3.3 2.7-6 6-6h6c3.3 0 6 2.7 6 6" />
+          <path d="M3 12h18M3 12a9 9 0 0 1 18 0M3 12c0-3.3 2.7-6 6-6h6c3.3 0 6 2.7 6 6"/>
         </svg>
       );
     }
@@ -393,19 +406,19 @@ export default function Wardrobe() {
                   <div className="clothing-img">
                     {itemImageSrc ? (
                       <img
-                        src={itemImageSrc}
-                        alt={item.nama_pakaian}
-                        onClick={() => setSelectedImage(itemImageSrc)}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          cursor: 'pointer'
-                        }}
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'flex';
-                        }}
+                          src={itemImageSrc}
+                          alt={item.nama_pakaian}
+                          onClick={() => setSelectedImage(itemImageSrc)}
+                          style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              cursor: 'pointer'
+                          }}
+                          onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                          }}
                       />
                     ) : null}
                     <div
@@ -458,18 +471,29 @@ export default function Wardrobe() {
         </div>
       </div>
       {selectedImage && (
-        <div
-          className="image-preview-overlay"
-          onClick={() => setSelectedImage(null)}
-        >
-          <img
-            src={selectedImage}
-            alt="Preview"
-            className="image-preview"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
+          <div
+              className="image-preview-overlay"
+              onClick={() => setSelectedImage(null)}
+          >
+              <img
+                  src={selectedImage}
+                  alt="Preview"
+                  className="image-preview"
+                  onClick={(e) => e.stopPropagation()}
+              />
+          </div>
       )}
+
+      <ConfirmModal
+        open={!!deleteTargetId}
+        title="Remove this item?"
+        description="This clothing item will be removed from your wardrobe. This action cannot be undone."
+        confirmLabel="Remove"
+        danger
+        loading={deleteLoading}
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteTargetId(null)}
+      />
     </>
   );
 }

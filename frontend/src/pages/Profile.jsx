@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import Navbar from '../components/Navbar';
 import '../styles/pages.css';
+import ConfirmModal from '../components/ConfirmModal';
 
-// --- small inline icons (no extra dependency needed) -----------------------
+// small inline icons 
 
 function EyeIcon() {
   return (
@@ -44,32 +45,6 @@ function Toast({ message, show, type }) {
     <div className={`toast ${show ? "toast--show" : ""} ${isError ? "toast--error" : ""}`}>
       <div className="toast-icon">{isError ? "✕" : "✓"}</div>
       <div className="toast-message">{message}</div>
-    </div>
-  );
-}
-
-// --- Confirm modal -------------------------------------------------------
-
-function ConfirmModal({ open, title, description, confirmLabel, danger, loading, onConfirm, onCancel }) {
-  if (!open) return null;
-  return (
-    <div className="modal-overlay" onClick={onCancel}>
-      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-title">{title}</div>
-        <div className="modal-desc">{description}</div>
-        <div className="modal-actions">
-          <button className="btn-secondary" onClick={onCancel}>
-            Cancel
-          </button>
-          <button
-            className={danger ? 'btn-danger' : 'btn-primary'}
-            onClick={onConfirm}
-            disabled={loading}
-          >
-            {loading ? 'Processing...' : confirmLabel}
-          </button>
-        </div>
-      </div>
     </div>
   );
 }
